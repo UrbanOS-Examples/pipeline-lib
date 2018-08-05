@@ -44,7 +44,7 @@ class KubeConfig implements Serializable {
                         scm: [$class: 'GitSCM',
                               branches: [[name: '*/master']],
                               doGenerateSubmoduleConfigurations: false,
-                              extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 2],
+                              extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 1],
                                            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'infra'],
                                            [$class: 'CleanBeforeCheckout'],
                                            [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'env'], [path: 'backends'], [path: 'modules']]]],
