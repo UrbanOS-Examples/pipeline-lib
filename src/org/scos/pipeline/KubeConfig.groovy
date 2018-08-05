@@ -1,12 +1,14 @@
 package org.scos.pipeline
 
 class KubeConfig implements Serializable {
-    def script, environment, configFile
+    def script, environment, configFile, backend
+    def backendsMap = [dev: "alm", staging: "alm", prod: "alm"]
 
     KubeConfig(script, environment) {
         this.script = script
         this.environment = environment
         this.configFile = "${script.env.WORKSPACE}/${environment}_kubeconfig"
+        this.backend = "${backendsMap.get(environment, 'sandbox-alm')}.conf"
     }
 
     def withConfig(closure) {
@@ -29,7 +31,7 @@ class KubeConfig implements Serializable {
     private terraformInit() {
         def initScript = [
             '#!/usr/bin/env bash',
-            'terraform init -backend-config=../backends/alm.conf',
+            "terraform init -backend-config=../backends/${backend}",
             "terraform workspace select ${environment} || (terraform workspace new ${environment}; terraform workspace select ${environment})"
         ].join('\n')
 
