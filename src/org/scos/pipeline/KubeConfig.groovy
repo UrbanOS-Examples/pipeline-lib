@@ -9,18 +9,20 @@ class KubeConfig implements Serializable {
         this.configFile = "${script.env.WORKSPACE}/${environment}_kubeconfig"
     }
 
-    def retrieve() {
-        cloneEnvInfra()
+    def withConfig(closure) {
+        retrieveConfig()
+
+        script.withEnv(["KUBECONFIG=${configFile}"]) {
+            closure()
+        }
+    }
+
+    private retrieveConfig() {
+        cloneCommon()
         terraformInit()
 
         script.dir('infra/env') {
             script.sh("terraform output eks-cluster-kubeconfig > ${configFile}")
-        }
-    }
-
-    def execute(closure) {
-        script.withEnv(["KUBECONFIG=${configFile}"]) {
-            closure()
         }
     }
 
@@ -36,7 +38,7 @@ class KubeConfig implements Serializable {
         }
     }
 
-    private cloneEnvInfra() {
+    private cloneCommon() {
         script.checkout(changelog: false,
                         poll: false,
                         scm: [$class: 'GitSCM',
