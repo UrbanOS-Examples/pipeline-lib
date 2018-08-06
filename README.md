@@ -13,3 +13,9 @@ brew install gradle
 ```bash
 gradle build
 ```
+
+## Test
+
+```bash
+gradle test
+```
