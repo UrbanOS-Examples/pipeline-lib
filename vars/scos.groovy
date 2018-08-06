@@ -1,8 +1,17 @@
 import org.scos.pipeline.KubeConfig
+import org.scos.pipeline.ReleaseNumber
 
 def withEksCredentials(environment, body) {
     def kube = new KubeConfig(this, environment)
     kube.withConfig(body)
+}
+
+def releaseNumber() {
+    ReleaseNumber.release()
+}
+
+def releaseCandidateNumber() {
+    ReleaseNumber.candidate()
 }
 
 def withDockerRegistry(Closure func) {
