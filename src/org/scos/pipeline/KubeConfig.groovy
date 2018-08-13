@@ -1,55 +1,21 @@
 package org.scos.pipeline
+import org.scos.pipeline.Terraform
 
 class KubeConfig implements Serializable {
-    def script, environment, configFile, backend
-    def backendsMap = [dev: "alm", staging: "alm", prod: "alm"]
+    def pipeline, configFile, environment
 
-    KubeConfig(script, environment) {
-        this.script = script
+    KubeConfig(pipeline, environment) {
+        this.pipeline = pipeline
         this.environment = environment
-        this.configFile = "${script.env.WORKSPACE}/${environment}_kubeconfig"
-        this.backend = "${backendsMap.get(environment, 'sandbox-alm')}.conf"
+        this.configFile = "${pipeline.env.WORKSPACE}/${environment}_kubeconfig"
     }
 
     def withConfig(closure) {
-        retrieveConfig()
+        def outputs = Terraform.gatherOutputs(pipeline, environment)
+        pipeline.sh("""echo "${outputs['eks-cluster-kubeconfig'].value}" > ${configFile}""")
 
-        script.withEnv(["KUBECONFIG=${configFile}"]) {
+        pipeline.withEnv(["KUBECONFIG=${configFile}"]) {
             closure()
         }
-    }
-
-    private retrieveConfig() {
-        cloneCommon()
-        terraformInit()
-
-        script.dir('infra/env') {
-            script.sh("terraform output eks-cluster-kubeconfig > ${configFile}")
-        }
-    }
-
-    private terraformInit() {
-        def initScript = [
-            '#!/usr/bin/env bash',
-            "terraform init -backend-config=../backends/${backend}",
-            "terraform workspace select ${environment} || (terraform workspace new ${environment}; terraform workspace select ${environment})"
-        ].join('\n')
-
-        script.dir('infra/env') {
-            script.sh(initScript)
-        }
-    }
-
-    private cloneCommon() {
-        script.checkout(changelog: false,
-                        poll: false,
-                        scm: [$class: 'GitSCM',
-                              branches: [[name: '*/master']],
-                              doGenerateSubmoduleConfigurations: false,
-                              extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 1],
-                                           [$class: 'RelativeTargetDirectory', relativeTargetDir: 'infra'],
-                                           [$class: 'CleanBeforeCheckout'],
-                                           [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'env'], [path: 'backends'], [path: 'modules']]]],
-                              userRemoteConfigs: [[credentialsId: 'jenkins-github-user', url: 'https://github.com/SmartColumbusOS/common.git']]])
     }
 }
