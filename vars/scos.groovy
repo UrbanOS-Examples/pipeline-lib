@@ -18,5 +18,6 @@ def withDockerRegistry(Closure func) {
 }
 
 def terraformOutput(environment) {
-    Terraform.gatherOutputs(this, environment)
+    def terraform = new Terraform(this, environment)
+    terraform.outputsAsJson()
 }
