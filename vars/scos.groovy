@@ -45,9 +45,9 @@ def doStageIf(boolean truthyValue, stageName, Closure closure) {
     }
 }
 
-def addGitHubRemoteForTagging() {
+def addGitHubRemoteForTagging(repoName) {
     withCredentials([usernamePassword(credentialsId: 'jenkins-github-user', passwordVariable: 'GIT_PWD', usernameVariable: 'GIT_USER')]) {
-        sh 'git remote add github https://$GIT_USER:$GIT_PWD@github.com/SmartColumbusOS/cota-streaming-producer.git'
+        sh "git remote add github https://\$GIT_USER:\$GIT_PWD@github.com/${repoName}"
     }
 }
 
