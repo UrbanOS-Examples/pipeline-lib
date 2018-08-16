@@ -1,6 +1,4 @@
-import org.scos.pipeline.KubeConfig
-import org.scos.pipeline.ReleaseNumber
-import org.scos.pipeline.Terraform
+import org.scos.pipeline.*
 
 def withEksCredentials(environment, body) {
     def kube = new KubeConfig(this, environment)
@@ -9,6 +7,15 @@ def withEksCredentials(environment, body) {
 
 def releaseCandidateNumber() {
     ReleaseNumber.candidate()
+}
+
+def isRelease(tag) {
+    DeploymentCondition.isRelease(tag)
+}
+
+def shouldDeploy(environment, nonSandboxEnvs, branch) {
+    def deploymentCondition = new DeploymentCondition()
+    deploymentCondition.shouldDeploy(environment, nonSandboxEnvs, branch)
 }
 
 def withDockerRegistry(Closure func) {
