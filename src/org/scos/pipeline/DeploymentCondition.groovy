@@ -1,8 +1,10 @@
 package org.scos.pipeline
 
 class DeploymentCondition {
-    boolean isSandbox(environment, nonSandboxEnvs) { 
-        !(environment in nonSandboxEnvs)
+    static final ENVIRONMENTS = ['dev', 'staging', 'prod']
+
+    boolean isSandbox(environment) {
+        !(environment in ENVIRONMENTS)
     }
 
     boolean isNonProdMasterBranch(branch, environment) {
@@ -13,7 +15,7 @@ class DeploymentCondition {
         (tag =~ /^\d+\.\d+\.\d+$/).matches()
     }
 
-    boolean shouldDeploy(environment, nonSandboxEnvs, branch) {
-        isSandbox(environment, nonSandboxEnvs) || isNonProdMasterBranch(branch, environment) || isRelease(branch)
+    boolean shouldDeploy(environment, branch) {
+        isSandbox(environment) || isNonProdMasterBranch(branch, environment) || isRelease(branch)
     }
 }

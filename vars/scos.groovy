@@ -13,9 +13,13 @@ def isRelease(tag) {
     DeploymentCondition.isRelease(tag)
 }
 
-def shouldDeploy(environment, nonSandboxEnvs, branch) {
+def shouldDeploy(environment, branch) {
     def deploymentCondition = new DeploymentCondition()
-    deploymentCondition.shouldDeploy(environment, nonSandboxEnvs, branch)
+    deploymentCondition.shouldDeploy(environment, branch)
+}
+
+def environments() {
+    DeploymentCondition.ENVIRONMENTS
 }
 
 def withDockerRegistry(Closure func) {

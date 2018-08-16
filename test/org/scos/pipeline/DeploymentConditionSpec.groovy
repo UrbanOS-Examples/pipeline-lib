@@ -25,41 +25,41 @@ class DeploymentConditionSpec extends Specification {
 
     def 'should deploy sandbox'() {
         expect:
-        condition.shouldDeploy('smrt-328', ['dev', 'staging', 'prod'], 'some_branch')
+        condition.shouldDeploy('smrt-328', 'some_branch')
     }
 
     def 'should deploy dev master branch'() {
         expect:
-        condition.shouldDeploy('dev', ['dev', 'staging', 'prod'], 'master')
+        condition.shouldDeploy('dev', 'master')
     }
 
     def 'should deploy staging master branch'() {
         expect:
-        condition.shouldDeploy('staging', ['dev', 'staging', 'prod'], 'master')
+        condition.shouldDeploy('staging', 'master')
     }
 
     def 'should deploy prod release tags'() {
         expect:
-        condition.shouldDeploy('prod', ['dev', 'staging', 'prod'], '2.3.21')
+        condition.shouldDeploy('prod', '2.3.21')
     }
 
     def 'should not deploy dev feature branches'() {
         expect:
-        !condition.shouldDeploy('dev', ['dev', 'staging', 'prod'], 'some_branch')
+        !condition.shouldDeploy('dev', 'some_branch')
     }
 
     def 'should not deploy staging feature branches'() {
         expect:
-        !condition.shouldDeploy('staging', ['dev', 'staging', 'prod'], 'some_branch')
+        !condition.shouldDeploy('staging', 'some_branch')
     }
 
     def 'should not deploy prod master branch'() {
         expect:
-        !condition.shouldDeploy('prod', ['dev', 'staging', 'prod'], 'master')
+        !condition.shouldDeploy('prod', 'master')
     }
 
     def 'should not deploy prod feature branches'() {
         expect:
-        !condition.shouldDeploy('prod', ['dev', 'staging', 'prod'], 'smrt-329-some_branch')
+        !condition.shouldDeploy('prod', 'smrt-329-some_branch')
     }
 }
