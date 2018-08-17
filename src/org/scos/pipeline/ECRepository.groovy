@@ -10,6 +10,7 @@ class ECRepository {
             def responseText = new URL(metadataURL).getText()
             new JsonSlurper().parseText(responseText).get('accountId', almAccountId)
         }
+        catch(SecurityException ex) { throw ex }
         catch(Exception _) { almAccountId }
 
     }

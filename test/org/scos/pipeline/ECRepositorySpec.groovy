@@ -38,4 +38,15 @@ class ECRepositorySpec extends Specification {
         ECRepository.hostname() == "${almAccountId}.dkr.ecr.us-east-2.amazonaws.com"
     }
 
+    def 'hostname re-raises script security exceptions'() {
+        given:
+        mockUrl.getText() >> { throw new SecurityException("you can't do that!!!") }
+
+        when:
+        ECRepository.hostname()
+
+        then:
+        thrown SecurityException
+    }
+
 }
