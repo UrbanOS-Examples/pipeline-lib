@@ -23,13 +23,13 @@ def environments() {
 }
 
 def withDockerRegistry(Closure func) {
-    docker.withRegistry("https://${ECRepository.url()}", "ecr:us-east-2:aws_jenkins_user") {
+    docker.withRegistry("https://${ECRepository.hostname()}", "ecr:us-east-2:aws_jenkins_user") {
         func()
     }
 }
 
 def pullImageFromDockerRegistry(imageName, imageTag) {
-    image = docker.image("${ECRepository.url()}/${imageName}:${imageTag}")
+    image = docker.image("${ECRepository.hostname()}/${imageName}:${imageTag}")
     image.pull()
     image
 }
