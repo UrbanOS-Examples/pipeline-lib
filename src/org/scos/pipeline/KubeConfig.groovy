@@ -11,10 +11,7 @@ class KubeConfig implements Serializable {
     }
 
     def withConfig(closure) {
-        def outputs = terraform.outputsAsJson()
-        def kubeconfigValue = terraform.outputsAsJson().eks_cluster_kubeconfig.value
-
-        pipeline.sh("""echo "${kubeconfigValue}" > ${configFile}""")
+        new File(configFile) << terraform.outputsAsJson().eks_cluster_kubeconfig.value
 
         pipeline.withEnv(["KUBECONFIG=${configFile}"]) {
             closure()
