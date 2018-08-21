@@ -13,8 +13,8 @@ class Terraform implements Serializable {
         def bucket_name = "scos-${backendsMap.get(environment, 'sandbox')}-terraform-state"
         def result = pipeline.sh(
             returnStdout: true,
-            script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system - | jq '.modules[0].outputs'"
+            script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system -"
             ).trim()
-        pipeline.readJSON text: result
+        (pipeline.readJSON text: result).modules[0].outputs
     }
 }
