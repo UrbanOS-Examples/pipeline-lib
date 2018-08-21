@@ -10,16 +10,11 @@ class Terraform implements Serializable {
     }
 
     def outputsAsJson() {
-
-        pipeline.dir('infra/env') {
-            def bucket_name = "scos-${backendsMap.get(environment, 'sandbox')}-terraform-state"
-
-            def result = pipeline.sh(
-                returnStdout: true,
-                script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system - | jq '.modules[0].outputs'"
-                ).trim()
-
-            pipeline.readJSON text: result
-        }
+        def bucket_name = "scos-${backendsMap.get(environment, 'sandbox')}-terraform-state"
+        def result = pipeline.sh(
+            returnStdout: true,
+            script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system - | jq '.modules[0].outputs'"
+            ).trim()
+        pipeline.readJSON text: result
     }
 }
