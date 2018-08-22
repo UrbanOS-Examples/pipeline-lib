@@ -43,7 +43,7 @@ class Terraform implements Serializable {
         String planCommand = "terraform plan "
 
         extra_variables.each { key, value ->
-            planCommand += "--var=${key}=${value} "
+            planCommand += "--var=${key}='${value}' "
         }
 
         planCommand += "--var-file=${varFile} "
@@ -51,7 +51,8 @@ class Terraform implements Serializable {
 
         def planOutput = pipeline.sh(returnStdout: true, script: planCommand)
 
-        writeFile(file: "plan-${environment}.txt", text: planOutput)
+        pipeline.echo(planOutput)
+        pipeline.writeFile(file: "plan-${environment}.txt", text: planOutput)
     }
 
     def apply() {
