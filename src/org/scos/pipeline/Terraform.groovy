@@ -51,7 +51,7 @@ class Terraform implements Serializable {
 
         def planOutput = pipeline.sh(returnStdout: true, script: planCommand)
 
-        writeFile("plan-${environment}.txt", planOutput)
+        writeFile(file: "plan-${environment}.txt", text: planOutput)
     }
 
     def apply() {
