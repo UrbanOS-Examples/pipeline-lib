@@ -23,8 +23,10 @@ class Terraform implements Serializable {
 
         List workspaces = pipeline.sh(
             returnStdout: true,
-            script: "terraform workspace list | cut -c 3- | tail -r | tail -n +2"
-            ).trim().split('\n')
+            script: "terraform workspace list"
+            ).split('\n').collect {
+                it.substring(2)
+            }
 
         if(workspaces.contains(environment)) {
             pipeline.sh "terraform workspace select ${environment}"
