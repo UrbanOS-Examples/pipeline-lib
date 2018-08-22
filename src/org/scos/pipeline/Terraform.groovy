@@ -14,7 +14,7 @@ class Terraform implements Serializable {
         def result = pipeline.sh(
             returnStdout: true,
             script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system -"
-            ).trim()
+        ).trim()
         pipeline.readJSON(text: result).modules[0].outputs
     }
 
