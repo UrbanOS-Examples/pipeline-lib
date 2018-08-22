@@ -19,6 +19,7 @@ class Terraform implements Serializable {
     }
 
     void init() {
+        pipeline.sh 'rm -rf .terraform'
         pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'alm-sandbox')}.conf"
 
         List workspaces = pipeline.sh(
@@ -35,7 +36,7 @@ class Terraform implements Serializable {
         }
     }
 
-    def plan(Map extra_variables = [:]) {
+    void plan(Map extra_variables = [:]) {
         def varFile = pipeline.fileExists("variables/${environment}.tfvars") ?
             "variables/${environment}.tfvars" :
             "variables/sandbox.tfvars"
@@ -55,7 +56,7 @@ class Terraform implements Serializable {
         pipeline.writeFile(file: "plan-${environment}.txt", text: planOutput)
     }
 
-    def apply() {
+    void apply() {
         pipeline.sh("terraform apply ${environment}.plan")
     }
 }
