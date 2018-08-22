@@ -22,13 +22,6 @@ class Terraform implements Serializable {
         pipeline.sh 'rm -rf .terraform'
         pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'alm-sandbox')}.conf"
 
-        List workspaces = pipeline.sh(
-            returnStdout: true,
-            script: "terraform workspace list"
-            ).split('\n').collect {
-                it.substring(2)
-            }
-
         if(workspaces.contains(environment)) {
             pipeline.sh "terraform workspace select ${environment}"
         } else {
@@ -58,5 +51,10 @@ class Terraform implements Serializable {
 
     void apply() {
         pipeline.sh("terraform apply ${environment}.plan")
+    }
+
+    private List getWorkspaces() {
+        def workspaceStr = pipeline.sh(script: "terraform workspace list", returnStdout: true)
+        workspaceStr.split('\n').collect { it.substring(2) }
     }
 }
