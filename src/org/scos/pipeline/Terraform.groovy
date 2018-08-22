@@ -36,7 +36,7 @@ class Terraform implements Serializable {
     }
 
     def plan(Map extra_variables = [:]) {
-        def varFile = new File("variables/${environment}.tfvars").exists() ?
+        def varFile = pipeline.fileExists("variables/${environment}.tfvars") ?
             "variables/${environment}.tfvars" :
             "variables/sandbox.tfvars"
 
@@ -51,7 +51,7 @@ class Terraform implements Serializable {
 
         def planOutput = pipeline.sh(returnStdout: true, script: planCommand)
 
-        new File("plan-${environment}.txt") << planOutput
+        writeFile("plan-${environment}.txt", planOutput)
     }
 
     def apply() {
