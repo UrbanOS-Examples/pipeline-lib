@@ -34,16 +34,10 @@ class Terraform implements Serializable {
             "variables/${environment}.tfvars" :
             "variables/sandbox.tfvars"
 
-        String planCommand = "terraform plan "
+        String planCommand = "terraform plan --var-file=${varFile} --out=${environment}.plan"
+        String planVars = extra_variables.inject("") { acc, key, val -> acc += " --var=${key}=${val}" }
 
-        extra_variables.each { key, value ->
-            planCommand += "--var=${key}='${value}' "
-        }
-
-        planCommand += "--var-file=${varFile} "
-        planCommand += "--out=${environment}.plan"
-
-        def planOutput = pipeline.sh(returnStdout: true, script: planCommand)
+        def planOutput = pipeline.sh(returnStdout: true, script: planCommand + planVars)
 
         pipeline.echo(planOutput)
         pipeline.writeFile(file: "plan-${environment}.txt", text: planOutput)
