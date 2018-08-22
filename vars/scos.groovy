@@ -34,6 +34,10 @@ def pullImageFromDockerRegistry(imageName, imageTag) {
     image
 }
 
+def terraform(environment) {
+    new Terraform(this, environment)
+}
+
 def terraformOutput(environment) {
     def terraform = new Terraform(this, environment)
     terraform.outputsAsJson()

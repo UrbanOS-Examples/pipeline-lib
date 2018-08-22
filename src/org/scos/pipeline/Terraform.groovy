@@ -17,4 +17,46 @@ class Terraform implements Serializable {
             ).trim()
         pipeline.readJSON(text: result).modules[0].outputs
     }
+
+    void init() {
+        pipeline.sh 'rm -rf .terraform'
+        pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'alm-sandbox')}.conf"
+
+        List workspaces = pipeline.sh(
+            returnStdout: true,
+            script: "terraform workspace list"
+            ).split('\n').collect {
+                it.substring(2)
+            }
+
+        if(workspaces.contains(environment)) {
+            pipeline.sh "terraform workspace select ${environment}"
+        } else {
+            pipeline.sh "terraform workspace new ${environment}"
+        }
+    }
+
+    void plan(Map extra_variables = [:]) {
+        def varFile = pipeline.fileExists("variables/${environment}.tfvars") ?
+            "variables/${environment}.tfvars" :
+            "variables/sandbox.tfvars"
+
+        String planCommand = "terraform plan "
+
+        extra_variables.each { key, value ->
+            planCommand += "--var=${key}='${value}' "
+        }
+
+        planCommand += "--var-file=${varFile} "
+        planCommand += "--out=${environment}.plan"
+
+        def planOutput = pipeline.sh(returnStdout: true, script: planCommand)
+
+        pipeline.echo(planOutput)
+        pipeline.writeFile(file: "plan-${environment}.txt", text: planOutput)
+    }
+
+    void apply() {
+        pipeline.sh("terraform apply ${environment}.plan")
+    }
 }
