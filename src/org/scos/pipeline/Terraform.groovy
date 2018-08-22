@@ -56,6 +56,6 @@ class Terraform implements Serializable {
     }
 
     def apply() {
-
+        pipeline.sh("terraform apply ${environment}.plan")
     }
 }
