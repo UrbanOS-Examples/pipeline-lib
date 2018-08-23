@@ -18,6 +18,12 @@ class Terraform implements Serializable {
         pipeline.readJSON(text: result).modules[0].outputs
     }
 
+    String getDefaultVarFile() {
+        pipeline.fileExists("variables/${environment}.tfvars") ?
+            "variables/${environment}.tfvars" :
+            "variables/sandbox.tfvars"
+    }
+
     void init() {
         pipeline.sh 'rm -rf .terraform'
         pipeline.sh "terraform init --backend-config=../backends/${almDeployments.contains(environment) ? 'alm' : 'sandbox-alm'}.conf"
@@ -36,12 +42,16 @@ class Terraform implements Serializable {
         }
     }
 
-    void plan(Map extra_variables = [:], varFile) {
+    void plan(varFile, Map extra_variables = [:], List extra_args = []) {
         String planCommand = "terraform plan "
         planCommand += "--var-file=${varFile} "
 
         extra_variables.each { key, value ->
             planCommand += "--var=${key}='${value}' "
+        }
+
+        extra_args.each { arg ->
+            planCommand += "${arg} "
         }
 
         planCommand += "--out=${environment}.plan"
@@ -52,12 +62,8 @@ class Terraform implements Serializable {
         pipeline.writeFile(file: "plan-${environment}.txt", text: planOutput)
     }
 
-    void plan(Map extra_variables = [:]) {
-        def varFile = pipeline.fileExists("variables/${environment}.tfvars") ?
-            "variables/${environment}.tfvars" :
-            "variables/sandbox.tfvars"
-
-        plan(extra_variables, varFile)
+    void planDestroy(varFile) {
+        this.plan(varFile, [:], ['--destroy'])
     }
 
     void apply() {
