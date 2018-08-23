@@ -14,7 +14,7 @@ class Terraform implements Serializable {
         def result = pipeline.sh(
             returnStdout: true,
             script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system -"
-            ).trim()
+        ).trim()
         pipeline.readJSON(text: result).modules[0].outputs
     }
 
@@ -27,13 +27,6 @@ class Terraform implements Serializable {
     void init() {
         pipeline.sh 'rm -rf .terraform'
         pipeline.sh "terraform init --backend-config=../backends/${almDeployments.contains(environment) ? 'alm' : 'sandbox-alm'}.conf"
-
-        List workspaces = pipeline.sh(
-            returnStdout: true,
-            script: "terraform workspace list"
-            ).split('\n').collect {
-                it.substring(2)
-            }
 
         if(workspaces.contains(environment)) {
             pipeline.sh "terraform workspace select ${environment}"
@@ -63,10 +56,15 @@ class Terraform implements Serializable {
     }
 
     void planDestroy(varFile) {
-        this.plan(varFile, [:], ['--destroy'])
+        plan(varFile, [:], ['--destroy'])
     }
 
     void apply() {
         pipeline.sh("terraform apply ${environment}.plan")
+    }
+
+    private List getWorkspaces() {
+        def workspaceStr = pipeline.sh(script: "terraform workspace list", returnStdout: true)
+        workspaceStr.split('\n').collect { it.substring(2) }
     }
 }
