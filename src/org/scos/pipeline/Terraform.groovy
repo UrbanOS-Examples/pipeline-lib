@@ -2,7 +2,7 @@ package org.scos.pipeline
 
 class Terraform implements Serializable {
     def pipeline, environment
-    def backendsMap = [dev: "alm", staging: "alm", prod: "alm"]
+    def backendsMap = [dev: "alm", staging: "alm", prod: "alm", prod-prime: "alm"]
 
     Terraform(pipeline, environment) {
         this.pipeline = pipeline
@@ -20,7 +20,7 @@ class Terraform implements Serializable {
 
     void init() {
         pipeline.sh 'rm -rf .terraform'
-        pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'alm-sandbox')}.conf"
+        pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'sandbox-alm')}.conf"
 
         List workspaces = pipeline.sh(
             returnStdout: true,
