@@ -2,7 +2,7 @@ package org.scos.pipeline
 
 class Terraform implements Serializable {
     def pipeline, environment
-    def backendsMap = [dev: "alm", staging: "alm", prod: "alm", prod-prime: "alm"]
+    def almDeployments = ['dev', 'staging', 'prod', 'prod-prime']
 
     Terraform(pipeline, environment) {
         this.pipeline = pipeline
@@ -10,7 +10,7 @@ class Terraform implements Serializable {
     }
 
     def outputsAsJson() {
-        def bucket_name = "scos-${backendsMap.get(environment, 'sandbox')}-terraform-state"
+        def bucket_name = "scos-${almDeployments.contains(environment) ? 'alm' : 'sandbox'}-terraform-state"
         def result = pipeline.sh(
             returnStdout: true,
             script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system -"
@@ -20,7 +20,7 @@ class Terraform implements Serializable {
 
     void init() {
         pipeline.sh 'rm -rf .terraform'
-        pipeline.sh "terraform init --backend-config=../backends/${backendsMap.get(environment, 'sandbox-alm')}.conf"
+        pipeline.sh "terraform init --backend-config=../backends/${almDeployments.contains(environment) ? 'alm' : 'sandbox-alm'}.conf"
 
         List workspaces = pipeline.sh(
             returnStdout: true,
