@@ -49,13 +49,13 @@ def doStageIf(boolean truthyValue, stageName, Closure closure) {
     }
 }
 
-def addGitHubRemoteForTagging(repoName) {
-    withCredentials([usernamePassword(credentialsId: 'jenkins-github-user', passwordVariable: 'GIT_PWD', usernameVariable: 'GIT_USER')]) {
-        sh "git remote add github https://\$GIT_USER:\$GIT_PWD@github.com/${repoName}"
-    }
-}
-
 def applyAndPushGitHubTag(tag) {
     sh "git tag -f ${tag}"
     sh "git push -f github ${tag}"
+}
+
+def doCheckoutStage() {
+    stage('Checkout') {
+        new Checkout(this).doCheckout()
+    }
 }

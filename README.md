@@ -4,7 +4,8 @@ Jenkins shared library
 ## Install dependencies on OSX
 
 ```bash
-brew cask install java
+brew tap homebrew/cask-versions
+brew cask install java8
 brew install gradle
 ```
 
