@@ -49,6 +49,7 @@ def doStageIf(boolean truthyValue, stageName, Closure closure) {
     }
 }
 
+//TODO: Delete this once fully merged
 def addGitHubRemoteForTagging(repoName) {
     withCredentials([usernamePassword(credentialsId: 'jenkins-github-user', passwordVariable: 'GIT_PWD', usernameVariable: 'GIT_USER')]) {
         sh "git remote add github https://\$GIT_USER:\$GIT_PWD@github.com/${repoName}"
@@ -58,4 +59,13 @@ def addGitHubRemoteForTagging(repoName) {
 def applyAndPushGitHubTag(tag) {
     sh "git tag -f ${tag}"
     sh "git push -f github ${tag}"
+}
+
+def doCheckout() {
+    deleteDir()
+    env.GIT_COMMIT_HASH = checkout(scm).GIT_COMMIT
+    def repoName = scm.getKey().replace("git https://", "")
+    withCredentials([usernamePassword(credentialsId: 'jenkins-github-user', passwordVariable: 'GIT_PWD', usernameVariable: 'GIT_USER')]) {
+        sh "git remote add github https://\$GIT_USER:\$GIT_PWD@${repoName}"
+    }
 }
