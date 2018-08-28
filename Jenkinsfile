@@ -11,7 +11,7 @@ node('master') {
         }
 
         stage('Build & Test') {
-            docker.image('gradle:slim').inside() {
+            docker.image('gradle:4.9.0-jdk8-slim').inside() {
                 sh 'gradle test --no-daemon --console=rich'
             }
         }
