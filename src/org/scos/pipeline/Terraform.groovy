@@ -56,7 +56,13 @@ class Terraform implements Serializable {
     }
 
     void planDestroy(varFile) {
-        plan(varFile, [:], ['--destroy'])
+        def extra_args = ['--destroy']
+
+        if(pipeline.fileExists('variables/destroy.tfvars')) {
+            extra_args << '--var-file=variables/destroy.tfvars'
+        }
+
+        plan(varFile, [:], extra_args)
     }
 
     void apply() {
