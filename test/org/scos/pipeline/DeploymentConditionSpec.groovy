@@ -3,88 +3,58 @@ import org.scos.pipeline.DeploymentCondition
 
 class DeploymentConditionSpec extends Specification {
     def condition
+    def releaseTag, candidateTag, hotfix, master, featureBranch
 
     def setup() {
-        condition = new DeploymentCondition()
+        releaseTag = new DeploymentCondition('1.2.3')
+        candidateTag = new DeploymentCondition('RC-2018.08.16.163102')
+        hotfix = new DeploymentCondition('hotfix/1.0.3')
+        master = new DeploymentCondition('master')
+        featureBranch = new DeploymentCondition('smrt-123')
     }
 
-    def 'isRelease'() {
+    def 'semantic version pattern is a release'() {
         expect:
-        condition.isRelease('1.1.1')
+        releaseTag.isRelease
     }
 
-    def 'isNotRelease'(){
+    def 'non-semver pattern is not a release'() {
         expect:
-        !condition.isRelease('sj.1.x')
+        !candidateTag.isRelease
+        !hotfix.isRelease
+        !master.isRelease
+        !featureBranch.isRelease
     }
 
-    def 'releaseCandidatesAreNotReleases'() {
+    def 'refspecs prepended with hotfix/ are hotfixes'() {
         expect:
-        !condition.isRelease('RC-2018.08.16.163102')
+        hotfix.isHotfix
     }
 
-    def 'hotfix is not a release'() {
+    def 'refspecs not prepended with hotfix are not hotfixes'() {
         expect:
-        !condition.isRelease('hotfix/1.0.3')
+        !releaseTag.isHotfix
+        !candidateTag.isHotfix
+        !master.isHotfix
+        !featureBranch.isHotfix
     }
 
-    def 'hotfix branch isHotfix'() {
-        expect:
-        condition.isHotfix('hotfix/1.0.3')
-    }
+    def 'should deploy based on branch and environment'() {
+        when:
+        condition = new DeploymentCondition(refspec)
 
-    def 'non-hotfix branch is not hotfix'() {
-        expect:
-        !condition.isHotfix('master')
-    }
+        then:
+        condition.shouldDeploy(environment) == expectation
 
-    def 'release tags are not hotfixes'() {
-        expect:
-        !condition.isHotfix('1.0.3')
-    }
-
-    def 'release candidate tags are not hotfixes'() {
-        expect:
-        !condition.isHotfix('RC-2018.08.16.163102')
-    }
-
-    def 'should deploy sandbox'() {
-        expect:
-        condition.shouldDeploy('smrt-328', 'some_branch')
-    }
-
-    def 'should deploy dev master branch'() {
-        expect:
-        condition.shouldDeploy('dev', 'master')
-    }
-
-    def 'should deploy staging master branch'() {
-        expect:
-        condition.shouldDeploy('staging', 'master')
-    }
-
-    def 'should deploy prod release tags'() {
-        expect:
-        condition.shouldDeploy('prod', '2.3.21')
-    }
-
-    def 'should not deploy dev feature branches'() {
-        expect:
-        !condition.shouldDeploy('dev', 'some_branch')
-    }
-
-    def 'should not deploy staging feature branches'() {
-        expect:
-        !condition.shouldDeploy('staging', 'some_branch')
-    }
-
-    def 'should not deploy prod master branch'() {
-        expect:
-        !condition.shouldDeploy('prod', 'master')
-    }
-
-    def 'should not deploy prod feature branches'() {
-        expect:
-        !condition.shouldDeploy('prod', 'smrt-329-some_branch')
+        where:
+        refspec    | environment | expectation
+        'branch'   | 'smrt-123'  | true
+        'master'   | 'dev'       | true
+        'master'   | 'staging'   | true
+        '2.3.21'   | 'prod'      | true
+        'branch'   | 'dev'       | false
+        'branch'   | 'staging'   | false
+        'master'   | 'prod'      | false
+        'smrt-239' | 'prod'      | false
     }
 }

@@ -9,12 +9,8 @@ def releaseCandidateNumber() {
     ReleaseNumber.candidate()
 }
 
-def isRelease(tag) {
-    DeploymentCondition.isRelease(tag)
-}
-
-def isHotfix(ref) {
-    DeploymentCondition.isHotfix(ref)
+def getChangeset() {
+    new DeploymentCondition(env.BRANCH_NAME)
 }
 
 def shouldDeploy(environment, branch) {
