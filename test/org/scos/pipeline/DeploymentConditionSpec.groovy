@@ -23,6 +23,31 @@ class DeploymentConditionSpec extends Specification {
         !condition.isRelease('RC-2018.08.16.163102')
     }
 
+    def 'hotfix is not a release'() {
+        expect:
+        !condition.isRelease('hotfix/1.0.3')
+    }
+
+    def 'hotfix branch isHotfix'() {
+        expect:
+        condition.isHotfix('hotfix/1.0.3')
+    }
+
+    def 'non-hotfix branch is not hotfix'() {
+        expect:
+        !condition.isHotfix('master')
+    }
+
+    def 'release tags are not hotfixes'() {
+        expect:
+        !condition.isHotfix('1.0.3')
+    }
+
+    def 'release candidate tags are not hotfixes'() {
+        expect:
+        !condition.isHotfix('RC-2018.08.16.163102')
+    }
+
     def 'should deploy sandbox'() {
         expect:
         condition.shouldDeploy('smrt-328', 'some_branch')

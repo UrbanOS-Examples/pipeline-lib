@@ -13,9 +13,13 @@ def isRelease(tag) {
     DeploymentCondition.isRelease(tag)
 }
 
+def isHotfix(ref) {
+    DeploymentCondition.isHotfix(ref)
+}
+
 def shouldDeploy(environment, branch) {
-    def deploymentCondition = new DeploymentCondition()
-    deploymentCondition.shouldDeploy(environment, branch)
+    def deploymentCondition = new DeploymentCondition(branch)
+    deploymentCondition.shouldDeploy(environment)
 }
 
 def environments() {

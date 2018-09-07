@@ -15,6 +15,10 @@ class DeploymentCondition {
         (tag =~ /^\d+\.\d+\.\d+$/).matches()
     }
 
+    static boolean isHotfix(String ref) {
+        (ref =~ /^hotfix\/.*$/).matches()
+    }
+
     boolean shouldDeploy(environment, branch) {
         isSandbox(environment) || isNonProdMasterBranch(branch, environment) || isRelease(branch)
     }
