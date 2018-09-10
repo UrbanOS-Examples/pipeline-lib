@@ -52,6 +52,8 @@ class DeploymentConditionSpec extends Specification {
         'master'   | 'dev'       | true
         'master'   | 'staging'   | true
         '2.3.21'   | 'prod'      | true
+        '2.3.21'   | 'dev'       | false
+        '2.3.21'   | 'staging'   | false
         'branch'   | 'dev'       | false
         'branch'   | 'staging'   | false
         'master'   | 'prod'      | false

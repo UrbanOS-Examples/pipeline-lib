@@ -26,6 +26,8 @@ class DeploymentCondition {
     }
 
     boolean shouldDeploy(environment) {
-        isSandbox(environment) || isNonProdMasterBranch(environment) || isRelease
+        isSandbox(environment)             ||
+        isNonProdMasterBranch(environment) ||
+        (isRelease && environment == 'prod')
     }
 }
