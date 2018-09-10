@@ -3,18 +3,18 @@ package org.scos.pipeline
 class DeploymentCondition {
     static final ENVIRONMENTS = ['dev', 'staging', 'prod']
 
-    def refspec
+    def pipeline
 
-    DeploymentCondition(refspec) {
-        this.refspec = refspec
+    DeploymentCondition(pipeline) {
+        this.pipeline = pipeline
     }
 
     boolean getIsRelease() {
-        (refspec =~ /^\d+\.\d+\.\d+$/).matches()
+        (pipeline.env.BRANCH_NAME =~ /^\d+\.\d+\.\d+$/).matches()
     }
 
     boolean getIsHotfix() {
-        (refspec =~ /^hotfix\/.*$/).matches()
+        (pipeline.env.BRANCH_NAME =~ /^hotfix\/.*$/).matches()
     }
 
     boolean isSandbox(environment) {
@@ -22,7 +22,7 @@ class DeploymentCondition {
     }
 
     boolean isNonProdMasterBranch(environment) {
-        (refspec == 'master' && environment != 'prod')
+        (pipeline.env.BRANCH_NAME == 'master' && environment != 'prod')
     }
 
     boolean shouldDeploy(environment) {

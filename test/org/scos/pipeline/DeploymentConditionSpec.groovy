@@ -6,11 +6,11 @@ class DeploymentConditionSpec extends Specification {
     def releaseTag, candidateTag, hotfix, master, featureBranch
 
     def setup() {
-        releaseTag = new DeploymentCondition('1.2.3')
-        candidateTag = new DeploymentCondition('RC-2018.08.16.163102')
-        hotfix = new DeploymentCondition('hotfix/1.0.3')
-        master = new DeploymentCondition('master')
-        featureBranch = new DeploymentCondition('smrt-123')
+        releaseTag = new DeploymentCondition([env: [BRANCH_NAME: '1.2.3']])
+        candidateTag = new DeploymentCondition([env: [BRANCH_NAME: 'RC-2018.08.16.163102']])
+        hotfix = new DeploymentCondition([env: [BRANCH_NAME: 'hotfix/1.0.3']])
+        master = new DeploymentCondition([env: [BRANCH_NAME: 'master']])
+        featureBranch = new DeploymentCondition([env: [BRANCH_NAME: 'smrt-123']])
     }
 
     def 'semantic version pattern is a release'() {
@@ -41,7 +41,7 @@ class DeploymentConditionSpec extends Specification {
 
     def 'should deploy based on branch and environment'() {
         when:
-        condition = new DeploymentCondition(refspec)
+        condition = new DeploymentCondition([env: [BRANCH_NAME: refspec]])
 
         then:
         condition.shouldDeploy(environment) == expectation

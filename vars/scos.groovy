@@ -10,12 +10,7 @@ def releaseCandidateNumber() {
 }
 
 def getChangeset() {
-    new DeploymentCondition(env.BRANCH_NAME)
-}
-
-def shouldDeploy(environment, branch) {
-    def deploymentCondition = new DeploymentCondition(branch)
-    deploymentCondition.shouldDeploy(environment)
+    new DeploymentCondition(this)
 }
 
 def environments() {
