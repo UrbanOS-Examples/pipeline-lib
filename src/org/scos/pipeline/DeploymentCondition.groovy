@@ -17,6 +17,10 @@ class DeploymentCondition {
         (pipeline.env.BRANCH_NAME =~ /^hotfix\/.*$/).matches()
     }
 
+    boolean getIsMaster() {
+        pipeline.env.BRANCH_NAME == 'master'
+    }
+
     boolean isSandbox(environment) {
         !(environment in ENVIRONMENTS)
     }
