@@ -9,11 +9,11 @@ class Terraform implements Serializable {
         this.environment = environment
     }
 
-    def outputsAsJson() {
+    def outputsAsJson(String project = "operating-system") {
         def bucket_name = "scos-${almDeployments.contains(environment) ? 'alm' : 'sandbox'}-terraform-state"
         def result = pipeline.sh(
             returnStdout: true,
-            script: "aws s3 cp s3://${bucket_name}/env:/${environment}/operating-system -"
+            script: "aws s3 cp s3://${bucket_name}/env:/${environment}/${project} -"
         ).trim()
         pipeline.readJSON(text: result).modules[0].outputs
     }
