@@ -33,9 +33,9 @@ def terraform(environment) {
     new Terraform(this, environment)
 }
 
-def terraformOutput(environment) {
+def terraformOutput(environment, project = "operating-system") {
     def terraform = new Terraform(this, environment)
-    terraform.outputsAsJson()
+    terraform.outputsAsJson(project)
 }
 
 def doStageIf(boolean truthyValue, stageName, Closure closure) {
