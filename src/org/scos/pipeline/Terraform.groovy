@@ -25,7 +25,7 @@ class Terraform implements Serializable {
     }
 
     void init() {
-        pipeline.sh "${env.WORKSPACE}/scripts/tf-init --workspace \"${environment}\" ${almDeployments.contains(environment) ? '' : '--sandbox'}"
+        pipeline.sh "${pipeline.env.WORKSPACE}/scripts/tf-init --workspace \"${environment}\" ${almDeployments.contains(environment) ? '' : '--sandbox'}"
     }
 
     void plan(varFile, Map extra_variables = [:], List extra_args = []) {
