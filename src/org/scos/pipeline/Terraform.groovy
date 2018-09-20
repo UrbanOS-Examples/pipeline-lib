@@ -25,14 +25,7 @@ class Terraform implements Serializable {
     }
 
     void init() {
-        pipeline.sh 'rm -rf .terraform'
-        pipeline.sh "terraform init --backend-config=../backends/${almDeployments.contains(environment) ? 'alm' : 'sandbox-alm'}.conf"
-
-        if(workspaces.contains(environment)) {
-            pipeline.sh "terraform workspace select ${environment}"
-        } else {
-            pipeline.sh "terraform workspace new ${environment}"
-        }
+        pipeline.sh "${env.WORKSPACE}/scripts/tf-init --workspace \"${environment}\" ${almDeployments.contains(environment) ? '' : '--sandbox'}"
     }
 
     void plan(varFile, Map extra_variables = [:], List extra_args = []) {
