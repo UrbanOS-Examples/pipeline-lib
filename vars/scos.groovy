@@ -29,6 +29,10 @@ def pullImageFromDockerRegistry(imageName, imageTag) {
     image
 }
 
+def getEcrHostname() {
+    ECRepository.hostname()
+}
+
 def terraform(environment) {
     new Terraform(this, environment)
 }
