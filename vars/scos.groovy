@@ -65,7 +65,7 @@ def doCheckoutStage() {
  *   pipelineTriggers([scos.dailyBuildTrigger()]),
  * ])
  */
-def dailyBuildTrigger() {
-    def cronSchedule = env.BRANCH_NAME == 'master' ? 'H H(0-6) * * *' : ''
+def dailyBuildTrigger(window = '0-6') {
+    def cronSchedule = env.BRANCH_NAME == 'master' ? "H H(window) * * *" : ''
     cron(cronSchedule)
 }
