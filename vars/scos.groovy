@@ -66,6 +66,6 @@ def doCheckoutStage() {
  * ])
  */
 def dailyBuildTrigger(window = '0-6') {
-    def cronSchedule = env.BRANCH_NAME == 'master' ? "H H(window) * * *" : ''
+    def cronSchedule = env.BRANCH_NAME == 'master' ? "H H(${window}) * * *" : ''
     cron(cronSchedule)
 }
