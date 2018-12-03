@@ -59,13 +59,7 @@ def doCheckoutStage() {
     }
 }
 
-/** Cron Trigger for building daily between midnight and 7 am
- * Ex:
- * properties([
- *   pipelineTriggers([scos.dailyBuildTrigger()]),
- * ])
- */
-def dailyBuildTrigger(window = '0-6') {
+def dailyBuildTrigger(window = '2-10') {
     def cronSchedule = env.BRANCH_NAME == 'master' ? "H H(${window}) * * *" : ''
     cron(cronSchedule)
 }
