@@ -9,6 +9,8 @@ brew cask install java8
 brew install gradle
 ```
 
+Note that upgrading to java 11 may cause some groovy functionality to break. To test this locally make sure to match versions if tests start failing.
+
 ## Build
 
 ```bash

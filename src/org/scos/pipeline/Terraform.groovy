@@ -64,6 +64,21 @@ class Terraform implements Serializable {
         pipeline.sh("terraform apply ${environment}.plan")
     }
 
+    /**
+    * Select TF workspace, creating it if necessary
+    */
+    void selectWorkspace() {
+        pipeline.sh("""#!/bin/bash
+        terraform init --backend-config backends/alm.conf
+
+        if terraform workspace list | grep -q ${environment}; then
+            terraform workspace select ${environment}
+        else
+            terraform workspace new ${environment}
+        fi
+        """)
+    }
+
     private List getWorkspaces() {
         def workspaceStr = pipeline.sh(script: "terraform workspace list", returnStdout: true)
         workspaceStr.split('\n').collect { it.substring(2) }
