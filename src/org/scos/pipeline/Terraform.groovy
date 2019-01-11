@@ -2,7 +2,7 @@ package org.scos.pipeline
 
 class Terraform implements Serializable {
     def pipeline, environment
-    def almDeployments = ['dev', 'staging', 'prod', 'prod-prime']
+    def nonSandboxDeployments = ['dev', 'staging', 'prod', 'prod-prime', 'alm']
 
     Terraform(pipeline, environment) {
         this.pipeline = pipeline
@@ -10,7 +10,7 @@ class Terraform implements Serializable {
     }
 
     def outputsAsJson(String project = "operating-system") {
-        def bucket_name = "scos-${almDeployments.contains(environment) ? 'alm' : 'sandbox'}-terraform-state"
+        def bucket_name = "scos-${nonSandboxDeployments.contains(environment) ? 'alm' : 'sandbox'}-terraform-state"
         def result = pipeline.sh(
             returnStdout: true,
             script: "aws s3 cp s3://${bucket_name}/env:/${environment}/${project} -"
@@ -26,7 +26,7 @@ class Terraform implements Serializable {
 
     void init() {
         pipeline.withEnv(['TF_PLUGIN_CACHE_DIR=/efs/worker/tf-cache']) {
-            pipeline.sh "${pipeline.env.WORKSPACE}/shared/scripts/tf-init --workspace \"${environment}\" ${almDeployments.contains(environment) ? '' : '--sandbox'}"
+            pipeline.sh "${pipeline.env.WORKSPACE}/shared/scripts/tf-init --workspace \"${environment}\" ${nonSandboxDeployments.contains(environment) ? '' : '--sandbox'}"
         }
     }
 
