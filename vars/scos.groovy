@@ -1,7 +1,11 @@
 import org.scos.pipeline.*
 
 def withEksCredentials(environment, body) {
-    def kube = new KubeConfig(this, environment)
+    withEksCredentials(environment, "operating-system", body)
+}
+
+def withEksCredentials(environment, project, body) {
+    def kube = new KubeConfig(this, environment, project)
     kube.withConfig(body)
 }
 
