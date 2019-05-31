@@ -63,3 +63,8 @@ def dailyBuildTrigger(window = '2-10') {
     def cronSchedule = env.BRANCH_NAME == 'master' ? "H H(${window}) * * *" : ''
     cron(cronSchedule)
 }
+
+def devDeployTrigger(projectName) {
+
+   DevDeployTrigger.devDeployTrigger(this, projectName)
+}
