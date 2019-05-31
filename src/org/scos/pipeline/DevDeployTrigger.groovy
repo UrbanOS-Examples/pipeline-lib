@@ -2,7 +2,7 @@ package org.scos.pipeline
 
 class DevDeployTrigger {
     static def devDeployTrigger(pipeline, projectName) {
-        pipeline.jobDsl { 
+        pipeline.jobDsl(scriptText: """
             job("${projectName}_dev_trigger") {
                 triggers {
                     urlTrigger {
@@ -27,6 +27,6 @@ class DevDeployTrigger {
                     }
                 }
             }
-        }
+            """.trim())
     }
 }
