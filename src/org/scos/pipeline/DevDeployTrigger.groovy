@@ -3,7 +3,7 @@ package org.scos.pipeline
 class DevDeployTrigger {
     static def devDeployTrigger(pipeline, projectName) {
         pipeline.jobDsl(scriptText: """
-            job("${projectName}_dev_trigger") {
+            job("${projectName}-dev-trigger") {
                 triggers {
                     urlTrigger {
                         cron("*/5 * * * *")
