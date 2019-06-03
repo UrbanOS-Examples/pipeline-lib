@@ -14,7 +14,7 @@ class DevDeployTrigger {
                 }
                 steps {
                     downstreamParameterized {
-                        trigger("SmartColumbusOS/${projectName}/master") {
+                        trigger("SmartColumbusOS/${projectName}-deploy/master") {
                             block {
                                 buildStepFailure("FAILURE")
                                 failure("FAILURE")
