@@ -1,13 +1,13 @@
 package org.scos.pipeline
 
 class DevDeployTrigger {
-    static def devDeployTrigger(pipeline, projectName, tag) {
+    static def devDeployTrigger(pipeline, projectName, tag, organization = "smartcitiesdata") {
         pipeline.jobDsl(scriptText: """
             job("${projectName}-dev-trigger") {
                 triggers {
                     urlTrigger {
                         cron("*/5 * * * *")
-                        url("https://hub.docker.com/v2/repositories/smartcitiesdata/${projectName}/tags/${tag}/") {
+                        url("https://hub.docker.com/v2/repositories/${organization}/${projectName}/tags/${tag}/") {
                             inspection("change")
                         }
                     }
