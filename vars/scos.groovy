@@ -64,7 +64,6 @@ def dailyBuildTrigger(window = '2-10') {
     cron(cronSchedule)
 }
 
-def devDeployTrigger(projectName, tag = "development") {
-
-   DevDeployTrigger.devDeployTrigger(this, projectName, tag)
+def devDeployTrigger(projectName, tag = "development", organization = "smartcitiesdata") {
+   DevDeployTrigger.devDeployTrigger(this, projectName, tag, organization)
 }

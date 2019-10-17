@@ -5,4 +5,7 @@ class PipelineMock {
     commands.add(command)
   }
 
+  def jobDsl(dsl) {
+    return dsl
+  }
 }
