@@ -1,4 +1,4 @@
-node('master') {
+node('infrastructure') {
     ansiColor('xterm') {
 
         stage('Checkout') {
