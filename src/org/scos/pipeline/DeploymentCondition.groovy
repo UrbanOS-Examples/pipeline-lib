@@ -18,7 +18,7 @@ class DeploymentCondition {
     }
 
     boolean getIsMaster() {
-        pipeline.env.BRANCH_NAME == 'master'
+        pipeline.env.BRANCH_NAME == 'master' || pipeline.env.BRANCH_NAME == 'main'
     }
 
     boolean isSandbox(environment) {
@@ -26,7 +26,7 @@ class DeploymentCondition {
     }
 
     boolean isNonProdMasterBranch(environment) {
-        (pipeline.env.BRANCH_NAME == 'master' && environment != 'prod')
+        this.isMaster && environment != 'prod'
     }
 
     boolean shouldDeploy(environment) {

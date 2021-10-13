@@ -49,6 +49,8 @@ class DeploymentConditionSpec extends Specification {
         where:
         refspec    | environment | expectation
         'branch'   | 'smrt-123'  | true
+        'main'     | 'dev'       | true
+        'main'     | 'staging'   | true
         'master'   | 'dev'       | true
         'master'   | 'staging'   | true
         '2.3.21'   | 'prod'      | true
@@ -56,6 +58,7 @@ class DeploymentConditionSpec extends Specification {
         '2.3.21'   | 'staging'   | false
         'branch'   | 'dev'       | false
         'branch'   | 'staging'   | false
+        'main'     | 'prod'      | false
         'master'   | 'prod'      | false
         'smrt-239' | 'prod'      | false
     }
